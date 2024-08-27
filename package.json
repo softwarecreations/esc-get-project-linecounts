@@ -1,0 +1,30 @@
+{
+  "name": "esc-get-project-linecounts",
+  "version": "0.1.0",
+  "description": "Gets linecounts of node.js project for code and text, categorized as specified.",
+  "main": "main.js",
+  "dependencies": {
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/softwarecreations/esc-get-project-linecounts.git"
+  },
+  "keywords": [
+    "path",
+    "join",
+    "safe",
+    "safer",
+    "subdirectory",
+    "security"
+  ],
+  "author": "softwarecreations",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/softwarecreations/esc-get-project-linecounts/issues"
+  },
+  "homepage": "https://github.com/softwarecreations/esc-get-project-linecounts#readme"
+}
