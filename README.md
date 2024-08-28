@@ -3,11 +3,11 @@ Gets linecounts of node.js project for code and text, categorized as specified.
 
 ## Example usage
 ```JavaScript
-import { getProjectStatsP } from 'esc-get-project-linecounts';
+import { getProjectLineCountsP } from 'esc-get-project-linecounts';
 
 const { projectDir } = process.env;
 
-setTimeout( () => getProjectStatsP({
+setTimeout( () => getProjectLineCountsP({
   projectDir,
   specialDirsA: [
     { type:'ignore'                      , pathsA:['/logs']                },

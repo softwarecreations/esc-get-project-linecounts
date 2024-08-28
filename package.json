@@ -1,6 +1,6 @@
 {
   "name": "esc-get-project-linecounts",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Gets linecounts of node.js project for code and text, categorized as specified.",
   "main": "main.mjs",
   "dependencies": {

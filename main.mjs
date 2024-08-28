@@ -14,7 +14,7 @@ const defaultSuffixTypesO = {
   text: 'txt,md',
 };
 
-export const getProjectStatsP = async ({
+export const getProjectLineCountsP = async ({
     projectDir,
     fmt = 'traditional',
     suffixTypesO = defaultSuffixTypesO,
