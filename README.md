@@ -1,7 +1,24 @@
 # esc-get-project-linecounts
 Gets linecounts of node.js project for code and text, categorized as specified.
 
-## Example usage
+## Example usage from cli
+Simple
+```sh
+./get-project-linecounts.mjs --projectDir=/home/bob/my-project
+```
+
+Advanced
+```sh
+./get-project-linecounts.mjs \
+  --projectDir=/home/bob/my-project \
+  --specialDir=ignore,/logs \
+  --specialDir=code,mockup-data,/imports/mockup-data \
+  --specialDir=text,code-docs,/code-docs \
+  --specialDir=scripts,scripts,/scripts \
+  --specialDir=code,test-code,/imports/ui/pages/_Special/manual-component-tests,/imports/ui/pages/_Special/MultiPageTests,/imports/ui/pages/_Special/Tests
+```
+
+## Example usage from code
 ```JavaScript
 import { getProjectLineCountsP } from 'esc-get-project-linecounts';
 
