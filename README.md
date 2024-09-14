@@ -57,7 +57,7 @@ My personal (dense) coding style works out to be 23% of the number of lines of t
 ## Why write dense code?
 Sometimes you only need to write a bit of code once and will rarely ever need to edit or read it again, and are happy to scroll sideways on that one occasion when you edit it if the need arises in future... rather than constantly scrolling up and down past code that you don't need to edit, **hundreds of times**.
 
-Obviously I write relatively dense code because I've found that it significantly improves my productivity significantly.
+Obviously I write relatively dense code because I've found that it improves my productivity significantly.
 
 Ideally I want to see all of the code that's relevant for what I'm doing when I'm doing it.
 
