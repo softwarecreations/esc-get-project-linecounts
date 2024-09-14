@@ -25,8 +25,10 @@ import { getProjectLineCountsP } from 'esc-get-project-linecounts';
 const { projectDir } = process.env;
 
 setTimeout( () => getProjectLineCountsP({
-  projectDir,
-  specialDirsA: [
+  projectDir,                  // * required
+  fmt: 'traditional',          // optional, can also be 'dense' or 'both'
+  cssLibsA: 'reset,bootstrap', // optional, or you get a default list
+    specialDirsA: [            // optional
     { type:'ignore'                      , pathsA:['/logs']                },
     { type:'code'   , label:'mockup-data', pathsA:['/imports/mockup-data'] },
     { type:'text'   , label:'code-docs'  , pathsA:['/code-docs']           },
