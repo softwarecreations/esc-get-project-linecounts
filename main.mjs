@@ -21,17 +21,23 @@ export const getProjectLineCountsP = async ({
   }) => {
   try {
     const getTextLineCountS = (filesA, label) => `${kN(filesA.reduce( (sum, filePath) => sum + fs.readFileSync(filePath,'utf8').split('\n').length, 0))} lines of ${label}`;
-    const getCodeLineCountS = (filesA, label) => {
-      let totalDenseLineCount = 0, totalTraditionalLineCount = 0;
+    const getCodeLineCountS = (filesA, label, type) => {
+      let totalCodeDenseLineCount=0, totalCodeTraditionalLineCount=0, totalCssDenseLineCount=0, totalCssTraditionalLineCount=0, cssLabel='';
       filesA.forEach( filePath => {
         const filename = path.basename(filePath);
         const buf = fs.readFileSync(filePath, 'utf8').replace(/&[a-z]+;/g, ''); // remove html codes &gt;
         const linesA = buf.split('\n');
+        let isCss = 0;
+        if (filename.endsWith('css')) {
+          isCss = 1;
+          if (cssLabel.length===0) cssLabel = 'CSS';
+          if (filename.endsWith('scss')) cssLabel = 'SCSS';
+        }
         if (fmt!=='dense') {
           const addlLongLines = linesA.reduce( (sum, line) => sum += Math.floor(line.length / 80), 0);
           const denseBuf = buf.replace(/[ \t]/g,'');
           const denseLinesA = denseBuf.split('\n')
-          let addlStatements = 0, isCss = filename.endsWith('css');
+          let addlStatements = 0;
           for (let i=0; i<denseLinesA.length; ++i) {
             let line = denseLinesA[i];
             addlStatements += matchCount(line, /;[^;]/g, 1); // multiple statements on a line separated by semicolons
@@ -55,14 +61,15 @@ export const getProjectLineCountsP = async ({
           const emptyLinesNeededBeforeCtrlStructure = matchCount(denseBuf, /[^\n]\n(if|else|switch|for|while|do|break|continue|return|try|catch|finally|throw|Promise|export|const|let|\/\/)/g, 0, 2); // adds 2 lines per control structure found that lacks empty line above assuming it wouldn't have empty line below either
           const addlTagLines = filename.includes('.js') ? matchCount(denseBuf, /<[^>]*>(?=<)/g) : 0;  // <div><p> would be split over multiple lines traditionally.
           const addlDenseFunc = matchCount(denseBuf, /function\([^)]*\){[^\n]/g, 0, 4); // for every one-line function () { return 1; } that we find we multiply that match (1) by 4 for 4 additional lines so it's \nfunction(){\nreturn 1;\n}\n so there is an empty line before and after
-          totalTraditionalLineCount += denseLinesA.length + addlStatements + extraEmptyLines + addlLongLines + emptyLinesNeededBeforeCtrlStructure + addlTagLines + addlDenseFunc;
+          let traditionalLineCount = denseLinesA.length + addlStatements + extraEmptyLines + addlLongLines + extraIfLines + emptyLinesNeededBeforeCtrlStructure + addlTagLines + addlDenseFunc;
+          if (isCss) totalCssTraditionalLineCount += traditionalLineCount; else totalCodeTraditionalLineCount += traditionalLineCount;;
         }
-        totalDenseLineCount += linesA.length;
+        if (isCss) totalCssDenseLineCount += linesA.length; else totalCodeDenseLineCount += linesA.length;;
       });
       switch (fmt) {
-        case 'both'       : return `${kN(totalDenseLineCount)} dense, ${kN(totalTraditionalLineCount)} traditional lines of ${label}`;
-        case 'dense'      : return `${kN(totalDenseLineCount)} lines of ${label}`;
-        case 'traditional': return `${kN(totalTraditionalLineCount)} lines of ${label}`;
+        case 'both'       : return `${kN(totalCodeDenseLineCount)} dense, ${kN(totalCodeTraditionalLineCount)} traditional lines of ${label}` + (cssLabel.length===0 ? '' : `, ${kN(totalCssDenseLineCount)} dense, ${kN(totalCssTraditionalLineCount)} traditional lines of ${cssLabel} ${label}`);
+        case 'dense'      : return `${kN(totalCodeDenseLineCount)} lines of ${label}` + (cssLabel.length===0 ? '' : `, ${kN(totalCssDenseLineCount)} lines of ${cssLabel} ${label}`);
+        case 'traditional': return `${kN(totalCodeTraditionalLineCount)} lines of ${label}` + (cssLabel.length===0 ? '' : `, ${kN(totalCssTraditionalLineCount)} lines of ${cssLabel} ${label}`);
       }
     };
     const getIgnorePathsA = specialDirsA => specialDirsA.map( ({ pathsA }) => pathsA ).flat().map( dir => `${projectDir}${dir}/**`);
@@ -70,7 +77,7 @@ export const getProjectLineCountsP = async ({
     const specialDirsWithoutIgnoreA = specialDirsA.filter( ({ type }) => type!=='ignore' );
     const mainIgnoreFilesA = getIgnorePathsA(specialDirsA).concat(`${projectDir}/node_modules/**`, `${projectDir}/package-lock.json`);
     const allLineCountsS = (await Promise.all( [ globP(projectDir + `/**/*.{${suffixTypesO.code}}`, { ignore:mainIgnoreFilesA }).
-      then( filesA => ({ specialDirIndex:-1, linesS:getCodeLineCountS(filesA, 'code') }) )
+      then( filesA => ({ specialDirIndex:-1, linesS:getCodeLineCountS(filesA, 'code', 'code') }) )
     ].concat(specialDirsWithoutIgnoreA.map( async ({ type, label, pathsA }, specialDirIndex) => {
       const ignorePathsA = allIgnorePathsA.concat(getIgnorePathsA(specialDirsWithoutIgnoreA.filter( (o, index) => index!==specialDirIndex )));
       const suffixTypes = suffixTypesO[type];
@@ -79,7 +86,7 @@ export const getProjectLineCountsP = async ({
       switch (type) {
         case 'code':
         case 'scripts':
-          return { specialDirIndex, linesS:getCodeLineCountS(filesA, label) };
+          return { specialDirIndex, linesS:getCodeLineCountS(filesA, label, type) };
         case 'text':
           return { specialDirIndex, linesS:getTextLineCountS(filesA, label) };
         default: throw new Error(`Unknown type:'${type}' for specialDir label:'${label}' [${pathsA.join(', ')}]`);
