@@ -27,7 +27,7 @@ const { projectDir } = process.env;
 setTimeout( () => getProjectLineCountsP({
   projectDir,                       // * required
   fmt: 'traditional',               // optional, can also be 'dense' or 'both'
-  cssLibsA: ['reset', 'bootstrap'], // optional, or you get a default list
+  cssLibsA: ['reset', 'bootstrap'], // optional, or you get a lot of defaults (see code)
     specialDirsA: [                 // optional
     { type:'ignore'                      , pathsA:['/logs']                },
     { type:'code'   , label:'mockup-data', pathsA:['/imports/mockup-data'] },
