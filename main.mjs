@@ -130,3 +130,5 @@ export const getProjectLineCountsP = async ({
     return `Error getting project info: ${err.message}`;
   }
 };
+
+export default getProjectLineCountsP;

@@ -1,8 +1,8 @@
 declare module 'esc-get-project-linecounts' {
   const defaultSuffixTypesO: {
-      code: string;
+      code   : string;
       scripts: string;
-      text: string;
+      text   : string;
   };
 
   interface SpecialDir {
@@ -20,4 +20,6 @@ declare module 'esc-get-project-linecounts' {
   }
 
   export const getProjectLineCountsP: (options: GetProjectLineCountsOptions) => Promise<string>;
+  
+  export default getProjectLineCountsP;
 }
